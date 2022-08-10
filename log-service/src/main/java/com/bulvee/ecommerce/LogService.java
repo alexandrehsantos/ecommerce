@@ -16,7 +16,6 @@ public class LogService {
                 LogService.class.getSimpleName(),
                 Pattern.compile("ECOMMERCE.*"),
                 logService::parse,
-                String.class,
                 Map.of(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class)
                 )) {
             kafkaService.run();

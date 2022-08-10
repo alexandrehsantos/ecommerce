@@ -10,16 +10,17 @@ import java.io.Closeable;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-public class KafkaDispacher<T> implements Closeable {
+public class KafkaDispatcher<T> implements Closeable {
 
-    private final KafkaProducer<String, T> producer;
+    private final KafkaProducer<String, Message<T>> producer;
 
-    public KafkaDispacher() {
-        producer = new KafkaProducer<String, T>(properties());
-
+    public KafkaDispatcher() {
+        producer = new KafkaProducer<String, Message<T>>(properties());
     }
 
-    void send(String topic, String key, T order) {
+    void send(CorrelationID correlationID, String topic, String key, T payload) throws InterruptedException, ExecutionException {
+        var value = new Message<T>(correlationID, payload);
+        var record = new ProducerRecord<>(topic, key, value);
 
         Callback callback = (data, ex) -> {
             if (ex != null) {
@@ -27,17 +28,7 @@ public class KafkaDispacher<T> implements Closeable {
             }
             System.out.println("sucesso enviando " + data.topic() + " :::partition " + data.partition() + " /offset " + data.offset() + " /timestamp " + data.timestamp());
         };
-
-        var orderRecord = new ProducerRecord<String, T>(topic, key, order);
-
-        try {
-            producer.send(orderRecord, callback).get();
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+        producer.send(record, callback).get();
     }
 
     private Properties properties() {
@@ -45,6 +36,8 @@ public class KafkaDispacher<T> implements Closeable {
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, GsonSerializer.class.getName());
+        properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");
+
         return properties;
     }
 
