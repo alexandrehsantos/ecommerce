@@ -1,6 +1,8 @@
 package com.bulvee.ecommerce;
 
 
+import com.bulvee.ecommerce.dispatcher.KafkaDispatcher;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

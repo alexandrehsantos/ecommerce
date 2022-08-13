@@ -1,5 +1,8 @@
-package com.bulvee.ecommerce;
+package com.bulvee.ecommerce.consumer;
 
+import com.bulvee.ecommerce.Message;
+import com.bulvee.ecommerce.dispatcher.GsonSerializer;
+import com.bulvee.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -18,18 +21,18 @@ public class KafkaService<T> implements Closeable {
     private String groupId;
     private final ConsumerFunction parse;
 
-    KafkaService(String groupId, Pattern topic, ConsumerFunction parse, Map<String, String> overrideProperties) {
-        this(parse,groupId, overrideProperties);
+    public KafkaService(String groupId, Pattern topic, ConsumerFunction parse, Map<String, String> overrideProperties) {
+        this(parse, groupId, overrideProperties);
         this.consumer = new KafkaConsumer<String, Message<T>>(getProperties(groupId, overrideProperties));
         consumer.subscribe(topic);
     }
 
-    KafkaService(ConsumerFunction parse, String groupId, Map<String, String> overrideProperties) {
-        this.parse= parse;
+    public KafkaService(ConsumerFunction parse, String groupId, Map<String, String> overrideProperties) {
+        this.parse = parse;
         this.consumer = new KafkaConsumer<>(getProperties(groupId, overrideProperties));
     }
 
-    void run() {
+    public void run() throws ExecutionException, InterruptedException {
         while (true) {
             var records = consumer.poll(Duration.ofMillis(1000));
             if (!records.isEmpty()) {
@@ -41,6 +44,7 @@ public class KafkaService<T> implements Closeable {
     }
 
     private void logExecution() {
+        System.out.println("================================================");
         System.out.println("No registries found...");
         try {
             Thread.sleep(1000);
@@ -49,16 +53,22 @@ public class KafkaService<T> implements Closeable {
         }
     }
 
-    private void consumeRecords(ConsumerRecords<String,Message<T>> records) {
+    private void consumeRecords(ConsumerRecords<String, Message<T>> records) throws ExecutionException, InterruptedException {
+        System.out.println("=====================================================");
         System.out.println("Found " + records.count() + " messages");
-        for (var record : records) {
-            try {
-                parse.consume(record);
-            } catch (Exception e) {
-                // only catches Exception because no  matter which Exception
-                // I want to recover and parse the next one
-                // so far, just logging the exception for this message
-                e.printStackTrace();
+        System.out.println("=====================================================");
+        try (var deadLetter = new KafkaDispatcher<>()) {
+            for (var record : records) {
+                try {
+                    parse.consume(record);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    var message = record.value();
+                    deadLetter.send(message.getId().continueWith("DeadLetter"),
+                            "ECOMMERCE_DEADLETTER",
+                            message.getId().toString(),
+                            new GsonSerializer().serialize("", message));
+                }
             }
         }
     }
@@ -71,7 +81,7 @@ public class KafkaService<T> implements Closeable {
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
         properties.putAll(overrideProperties);
-        properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
+//        properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1");
         return properties;
     }
 

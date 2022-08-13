@@ -1,5 +1,7 @@
 package com.bulvee.ecommerce;
 
+import com.bulvee.ecommerce.consumer.KafkaService;
+import com.bulvee.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.math.BigDecimal;
@@ -10,7 +12,7 @@ import java.util.regex.Pattern;
 public class FraudDetectorService {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         var fraudDetectorService = new FraudDetectorService();
         try (var kafkaService = new KafkaService(FraudDetectorService.class.getSimpleName(),
                 Pattern.compile("ECOMMERCE_NEW_ORDER"),

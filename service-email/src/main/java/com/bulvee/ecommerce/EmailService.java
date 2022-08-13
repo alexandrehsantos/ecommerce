@@ -1,13 +1,15 @@
 package com.bulvee.ecommerce;
 
+import com.bulvee.ecommerce.consumer.KafkaService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class EmailService {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         var emailService = new EmailService();
         try (var kafkaService = new KafkaService(EmailService.class.getSimpleName(),
                 Pattern.compile("ECOMMERCE_SEND_EMAIL"),

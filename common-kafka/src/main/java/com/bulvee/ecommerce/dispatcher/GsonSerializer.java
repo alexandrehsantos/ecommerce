@@ -1,5 +1,7 @@
-package com.bulvee.ecommerce;
+package com.bulvee.ecommerce.dispatcher;
 
+import com.bulvee.ecommerce.Message;
+import com.bulvee.ecommerce.MessageAdapter;
 import com.google.gson.GsonBuilder;
 import org.apache.kafka.common.serialization.Serializer;
 import com.google.gson.Gson;

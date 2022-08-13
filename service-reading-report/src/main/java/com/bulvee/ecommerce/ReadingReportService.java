@@ -1,10 +1,11 @@
 package com.bulvee.ecommerce;
 
+import com.bulvee.ecommerce.consumer.KafkaService;
+import com.bulvee.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
@@ -15,17 +16,17 @@ public class ReadingReportService {
     private static final Path SOURCE = new File("src/main/resources/report.txt").toPath();
 
     private final KafkaDispatcher<User> orderDispacher = new KafkaDispatcher<>();
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         var reportServie = new ReadingReportService();
         try (var kafkaService = new KafkaService(ReadingReportService.class.getSimpleName(),
                 Pattern.compile("ECOMMERCE_USER_GENERATE_READING_REPORT"),
-                reportServie::parse,
+                reportServie::consume,
                 new HashMap<>()
                 )) {
             kafkaService.run();
         }
     }
-    private void parse(ConsumerRecord<String, Message<User>> record) throws ExecutionException, InterruptedException, IOException {
+    private void consume(ConsumerRecord<String, Message<User>> record) throws ExecutionException, InterruptedException, IOException {
         System.out.println("-------------------------------------------------------------");
         System.out.println("Processing report for " + record.value());
 

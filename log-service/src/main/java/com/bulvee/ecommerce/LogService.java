@@ -1,16 +1,18 @@
 package com.bulvee.ecommerce;
 
+import com.bulvee.ecommerce.consumer.KafkaService;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class LogService {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         LogService logService = new LogService();
         try (var kafkaService = new KafkaService(
                 LogService.class.getSimpleName(),

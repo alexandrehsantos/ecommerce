@@ -1,5 +1,6 @@
 package com.bulvee.ecommerce;
 
+import com.bulvee.ecommerce.consumer.KafkaService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.sql.Connection;
@@ -27,7 +28,7 @@ public class CreateUserService {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException {
         var createUserService = new CreateUserService();
         try (var kafkaService = new KafkaService<>(CreateUserService.class.getSimpleName(),
                 Pattern.compile("ECOMMERCE_NEW_ORDER"),
@@ -43,6 +44,7 @@ public class CreateUserService {
         System.out.println("Creating new user.");
 
         var order = record.value().getPayload();
+        System.out.println("Checking message id " + record.value().getId());
         if(isNewUser(order.getEmail())){
             insertNewUser(order.getEmail());
         }

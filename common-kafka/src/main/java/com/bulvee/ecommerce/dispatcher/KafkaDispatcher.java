@@ -1,14 +1,14 @@
-package com.bulvee.ecommerce;
+package com.bulvee.ecommerce.dispatcher;
 
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import com.bulvee.ecommerce.CorrelationID;
+import com.bulvee.ecommerce.Message;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.io.Closeable;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class KafkaDispatcher<T> implements Closeable {
 
@@ -18,8 +18,22 @@ public class KafkaDispatcher<T> implements Closeable {
         producer = new KafkaProducer<String, Message<T>>(properties());
     }
 
-    void send(CorrelationID correlationID, String topic, String key, T payload) throws InterruptedException, ExecutionException {
-        var value = new Message<T>(correlationID, payload);
+    public Future<RecordMetadata> sendAsync(CorrelationID correlationID, String topic, String key, T payload) throws InterruptedException, ExecutionException {
+        var value = new Message<T>(correlationID.continueWith("_" + topic), payload);
+        var record = new ProducerRecord<>(topic, key, value);
+
+        Callback callback = (data, ex) -> {
+            if (ex != null) {
+                ex.printStackTrace();
+            }
+            System.out.println("sucesso enviando " + data.topic() + " :::partition " + data.partition() + " /offset " + data.offset() + " /timestamp " + data.timestamp());
+        };
+        return producer.send(record, callback);
+    }
+
+
+    public void send(CorrelationID correlationID, String topic, String key, T payload) throws InterruptedException, ExecutionException {
+        var value = new Message<T>(correlationID.continueWith("_" + topic), payload);
         var record = new ProducerRecord<>(topic, key, value);
 
         Callback callback = (data, ex) -> {
