@@ -1,6 +1,8 @@
 package com.bulvee.ecommerce;
 
+import com.bulvee.ecommerce.consumer.ConsumerService;
 import com.bulvee.ecommerce.consumer.KafkaService;
+import com.bulvee.ecommerce.consumer.ServiceRunner;
 import com.bulvee.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -8,23 +10,13 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-public class EmailNewOrderService {
+public class EmailNewOrderService implements ConsumerService<Order> {
 
     public static void main(String[] args) {
-        var emailNewOrderService = new EmailNewOrderService();
-        try (var kafkaService = new KafkaService(EmailNewOrderService.class.getSimpleName(),
-                Pattern.compile("ECOMMERCE_NEW_ORDER"),
-                emailNewOrderService::parse,
-                new HashMap<>())) {
-            kafkaService.run();
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        new ServiceRunner(EmailNewOrderService::new).start(1);
     }
 
-    private void parse(ConsumerRecord<String, Message<Order>> record) throws ExecutionException, InterruptedException {
+    public void parse(ConsumerRecord<String, Message<Order>> record) throws ExecutionException, InterruptedException {
         System.out.println("========================================");
         System.out.println(" Received new order, preparing email.");
         System.out.println("========================================");
@@ -32,14 +24,21 @@ public class EmailNewOrderService {
         var order = message.getPayload();
         System.out.println(" Order: " + message);
 
-        KafkaDispatcher<String> kafkaDispatcher = new KafkaDispatcher<>();
+        KafkaDispatcher<Email> kafkaDispatcher = new KafkaDispatcher<>();
 
-        var emailMessage = "Thank you for your order! We are processing your order!";
         var id = message.getId().continueWith(EmailNewOrderService.class.getSimpleName());
-        kafkaDispatcher.send(id,
-                "ECOMMERCE_SEND_EMAIL",
-                order.getEmail(),
-                emailMessage);
+        var emailMessage = new Email("Order", "Thank you for your order! We are processing your order!");
+        kafkaDispatcher.send(id, "ECOMMERCE_SEND_EMAIL", order.getEmail(), emailMessage);
 
+    }
+
+    @Override
+    public String getTopic() {
+        return "ECOMMERCE_NEW_ORDER";
+    }
+
+    @Override
+    public String getConsumerGroup() {
+        return this.getClass().getSimpleName();
     }
 }

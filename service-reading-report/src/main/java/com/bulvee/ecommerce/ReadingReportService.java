@@ -1,6 +1,9 @@
 package com.bulvee.ecommerce;
 
+import com.bulvee.ecommerce.consumer.ConsumerService;
 import com.bulvee.ecommerce.consumer.KafkaService;
+import com.bulvee.ecommerce.consumer.ServiceProvider;
+import com.bulvee.ecommerce.consumer.ServiceRunner;
 import com.bulvee.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -11,22 +14,16 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-public class ReadingReportService {
+public class ReadingReportService implements ConsumerService<User> {
 
     private static final Path SOURCE = new File("src/main/resources/report.txt").toPath();
 
     private final KafkaDispatcher<User> orderDispacher = new KafkaDispatcher<>();
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        var reportServie = new ReadingReportService();
-        try (var kafkaService = new KafkaService(ReadingReportService.class.getSimpleName(),
-                Pattern.compile("ECOMMERCE_USER_GENERATE_READING_REPORT"),
-                reportServie::consume,
-                new HashMap<>()
-                )) {
-            kafkaService.run();
-        }
+        new ServiceRunner<User>(ReadingReportService::new).start(5);
     }
-    private void consume(ConsumerRecord<String, Message<User>> record) throws ExecutionException, InterruptedException, IOException {
+    @Override
+    public void parse(ConsumerRecord<String, Message<User>> record) throws IOException {
         System.out.println("-------------------------------------------------------------");
         System.out.println("Processing report for " + record.value());
 
@@ -36,6 +33,16 @@ public class ReadingReportService {
         IO.append(target, "Created for " + user.getUUID());
 
         System.out.println("File created: " + target.getAbsolutePath());
+    }
+
+    @Override
+    public String getTopic() {
+        return "ECOMMERCE_USER_GENERATE_READING_REPORT";
+    }
+
+    @Override
+    public String getConsumerGroup() {
+        return this.getClass().getSimpleName();
     }
 }
 

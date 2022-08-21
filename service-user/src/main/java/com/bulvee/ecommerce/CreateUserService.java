@@ -1,6 +1,9 @@
 package com.bulvee.ecommerce;
 
+import com.bulvee.ecommerce.consumer.ConsumerService;
 import com.bulvee.ecommerce.consumer.KafkaService;
+import com.bulvee.ecommerce.consumer.ServiceProvider;
+import com.bulvee.ecommerce.consumer.ServiceRunner;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.sql.Connection;
@@ -11,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-public class CreateUserService {
+public class CreateUserService implements ConsumerService<Order> {
 
     private final Connection connection;
 
@@ -29,15 +32,9 @@ public class CreateUserService {
     }
 
     public static void main(String[] args) throws SQLException, ExecutionException, InterruptedException {
-        var createUserService = new CreateUserService();
-        try (var kafkaService = new KafkaService<>(CreateUserService.class.getSimpleName(),
-                Pattern.compile("ECOMMERCE_NEW_ORDER"),
-                createUserService::parse,
-                new HashMap<>())) {
-            kafkaService.run();
-        }
+        new ServiceRunner(CreateUserService::new).start(1);
     }
-    private void parse(ConsumerRecord<String, Message<Order>> record) throws ExecutionException, InterruptedException, SQLException {
+    public void parse(ConsumerRecord<String, Message<Order>> record) throws ExecutionException, InterruptedException, SQLException {
         System.out.println("========================================");
         System.out.println(" User service");
         System.out.println("========================================");
@@ -48,6 +45,16 @@ public class CreateUserService {
         if(isNewUser(order.getEmail())){
             insertNewUser(order.getEmail());
         }
+    }
+
+    @Override
+    public String getTopic() {
+        return "ECOMMERCE_NEW_ORDER";
+    }
+
+    @Override
+    public String getConsumerGroup() {
+        return this.getClass().getSimpleName();
     }
 
     private void insertNewUser(String email) throws SQLException {

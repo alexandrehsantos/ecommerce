@@ -51,10 +51,6 @@ public class BatchSendMessageService {
         System.out.println("Topic: " + message.getPayload());
         System.out.println("========================================");
 
-        if (true) {
-            System.out.println("-----------------error---");
-            throw new RuntimeException();
-        }
         for (User user : getAllUsers()) {
             userDispatcher.send(message.getId().continueWith(BatchSendMessageService.class.getSimpleName()), message.getPayload(), user.getUUID(), user);
         }

@@ -1,29 +1,21 @@
 package com.bulvee.ecommerce;
 
-import com.bulvee.ecommerce.consumer.KafkaService;
+import com.bulvee.ecommerce.consumer.ConsumerService;
+import com.bulvee.ecommerce.consumer.ServiceRunner;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Pattern;
 
-public class EmailService {
+public class EmailService implements ConsumerService<Email> {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        var emailService = new EmailService();
-        try (var kafkaService = new KafkaService(EmailService.class.getSimpleName(),
-                Pattern.compile("ECOMMERCE_SEND_EMAIL"),
-                emailService::parse,
-                new HashMap<>()
-                )) {
-            kafkaService.run();
-        }
+        new ServiceRunner(EmailService::new).start(5);
     }
 
-    private void parse(ConsumerRecord<String, Email> record) {
+    public void parse(ConsumerRecord<String, Message<Email>> record) {
         System.out.println("Sending email");
         System.out.println(record.key());
-        Email value = record.value();
+        Email value = record.value().getPayload();
         System.out.println("Subject: " + value.getSubject() + "Body: " + value.getBody());
         System.out.println(record.partition());
         try {
@@ -31,5 +23,15 @@ public class EmailService {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String getTopic() {
+        return "ECOMMERCE_SEND_EMAIL";
+    }
+
+    @Override
+    public String getConsumerGroup() {
+        return EmailService.class.getSimpleName();
     }
 }
