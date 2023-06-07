@@ -24,51 +24,23 @@ Is necessary to have the requirements bellow.
 - Clone the project:
 
 ```
-git clone https://gitlab.com/youruser/sham
+git clone  https://github.com/youuser/ecommerce.git
 ```
 
 - Go to the project directory:
 
 ```
-cd sham
-```
-
-Configuration fiel
-```
-Update the information on application-local.yml
-```
-Profile = local
-```
-By vm options
-Set the profile at vm options -Dspring.profiles.active=local
-```
-
-```
-By maven plugin
-mvn spring-boot:run -Dspring-boot.run.profiles=local 
+- cd ecommerce
 ```
 ```
-By STS (SpringToolSuite)
-Execute o Atalho Ctrl+ALT+P 
-```
-```
-By IntelliJ Ultimate (SpringToolSuite)
-Type the profile name local at active profiles.
-```
-```
-By IntelliJ Community (SpringToolSuite)
-Type bellow build and run --spring.profiles.active=local
+- mvn clean install at root folder
 ```
 
 
-- Project build:
-
+### Help scripts for Kafka
 ```
-mvn clean install at root folder
+For auxiliary in the start and stop Kafka there are two scripts inside src/main/resources/:
+    start-kafka-enviroment.sh
+    stop-kafka-enviroment.sh
+Just change kafka_server_location, zookeeper_location, config_path variables to your envrironment.
 ```
-
-```
-mvn spring-boot:run
-```
-
-## Instructions to use the API are under construction. 
