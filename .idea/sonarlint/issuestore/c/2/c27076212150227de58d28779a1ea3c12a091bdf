@@ -1,0 +1,26 @@
+
+`	java:S1124"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+J
+java:S3740"/Provide the parametrized type for this generic.(âªû»ıÿÿÿÿ
+E
+java:S3740"/Provide the parametrized type for this generic.(ßõ£è
+J
+java:S3740"/Provide the parametrized type for this generic.(ÌªŸ¡úÿÿÿÿ
+E
+java:S3740F"/Provide the parametrized type for this generic.(¢ûˆç
+t
+java:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(ïÿÆ—úÿÿÿÿ
+=
+java:S2189$""Add an end condition to this loop.(˜ïˆÿÿÿÿÿ
+S	java:S106/"9Replace this use of System.out or System.err by a logger.(û¼Ãÿÿÿÿÿ
+N	java:S1060"9Replace this use of System.out or System.err by a logger.(ğ¯¹
+t
+java:S21423"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€
+S	java:S1069"9Replace this use of System.out or System.err by a logger.(ßÚäëøÿÿÿÿ
+S	java:S106:"9Replace this use of System.out or System.err by a logger.(÷²±¹üÿÿÿÿ
+S	java:S106;"9Replace this use of System.out or System.err by a logger.(ßÚäëøÿÿÿÿ
+U
+java:S6213=":Rename this variable to not match a restricted identifier.(´Ÿ•şÿÿÿÿ
+V	java:S125U"<This block of commented-out lines of code should be removed.(ûâÚâùÿÿÿÿ
+@
+java:S1068"+Remove this unused "groupId" private field.(Š¥½U

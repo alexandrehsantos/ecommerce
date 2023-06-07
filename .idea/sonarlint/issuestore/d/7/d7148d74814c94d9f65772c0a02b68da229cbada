@@ -1,8 +1,0 @@
-
-f
-java:S2095"KUse try-with-resources or close this "KafkaProducer" in a "finally" clause.(¹ÈÓ¦ûÿÿÿÿ
-P
-java:S6213":Rename this variable to not match a restricted identifier.(ÚÍ
-S	java:S106"9Replace this use of System.out or System.err by a logger.(â€´—şÿÿÿÿ
-E
-java:S1128"*Remove this unused import 'java.util.Map'.(¼è½Òşÿÿÿÿ

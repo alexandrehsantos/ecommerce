@@ -1,0 +1,17 @@
+
+`	java:S112'"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ
+—
+java:S1130"€Remove the declaration of thrown exception 'java.util.concurrent.ExecutionException', as it cannot be thrown from method's body.(­Ëê
+
+java:S1130"wRemove the declaration of thrown exception 'java.lang.InterruptedException', as it cannot be thrown from method's body.(­Ëê
+P
+java:S6213 ":Rename this variable to not match a restricted identifier.(®™ÿã
+N	java:S106!"9Replace this use of System.out or System.err by a logger.(‰ÁÊ£
+S	java:S106""9Replace this use of System.out or System.err by a logger.(Ÿ‰‡çüÿÿÿÿ
+S	java:S106#"9Replace this use of System.out or System.err by a logger.(Œî ´üÿÿÿÿ
+t
+java:S2142&"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€
+M	java:S106."9Replace this use of System.out or System.err by a logger.(ÎîÎe
+N	java:S1060"9Replace this use of System.out or System.err by a logger.(Ç·À®
+S	java:S106="9Replace this use of System.out or System.err by a logger.(’¸æóøÿÿÿÿ
+N	java:S106A"9Replace this use of System.out or System.err by a logger.(ûĞ¹

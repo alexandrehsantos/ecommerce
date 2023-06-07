@@ -1,8 +1,6 @@
 package com.bulvee.ecommerce;
 
 import com.bulvee.ecommerce.consumer.ConsumerService;
-import com.bulvee.ecommerce.consumer.KafkaService;
-import com.bulvee.ecommerce.consumer.ServiceProvider;
 import com.bulvee.ecommerce.consumer.ServiceRunner;
 import com.bulvee.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -10,9 +8,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Pattern;
 
 public class ReadingReportService implements ConsumerService<User> {
 

@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutionException;
 
 public interface ConsumerService<T> {
 
+    // you may argue that a ConsumerException would be better
+    // and it's ok, it can better
     void parse(ConsumerRecord<String, Message<T>> record) throws IOException, ExecutionException, InterruptedException, SQLException;
     public String getTopic();
     public String getConsumerGroup();

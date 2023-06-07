@@ -3,12 +3,12 @@ package com.bulvee.ecommerce;
 import java.math.BigDecimal;
 
 public class Order {
-    private final String userId;
+    private final String orderId;
     private final BigDecimal amount;
     private final String email;
 
     public Order(String userId, BigDecimal amount, String email) {
-        this.userId = userId;
+        this.orderId = userId;
         this.amount = amount;
         this.email = email;
     }
@@ -18,12 +18,16 @@ public class Order {
     @Override
     public String toString() {
         return "Order{" +
-                ", userId='" + userId + '\'' +
+                ", userId='" + orderId + '\'' +
                 ", amount=" + amount +
                 '}';
     }
 
     public String getEmail() {
         return this.email;
+    }
+
+    public String getId() {
+       return this.orderId;
     }
 }
