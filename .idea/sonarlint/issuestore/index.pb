@@ -1,6 +1,4 @@
 
-7
-pom.xml,4\4\442292b8a7efeabbe4cc176709b833b1792140ec
 k
 ;service-fraud/src/main/java/com/bulvee/ecommerce/Order.java,5\9\5926b4fb4ee5fa152b6f2704af36e63cc3bd1a3a
 z

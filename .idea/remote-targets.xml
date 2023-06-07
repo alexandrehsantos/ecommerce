@@ -17,6 +17,22 @@
           </config>
         </ContributedStateBase>
       </target>
+      <target name="WSL2" type="wsl" uuid="05e5984e-e35b-4a85-8c9e-53a3a41a7f34">
+        <config>
+          <option name="distributionMsId" value="Ubuntu20.04" />
+        </config>
+        <ContributedStateBase type="JavaLanguageRuntime">
+          <config>
+            <option name="homePath" value="/home/ale/.sdkman/candidates/java/11.0.2-open" />
+          </config>
+        </ContributedStateBase>
+        <ContributedStateBase type="MavenRuntime">
+          <config>
+            <option name="homePath" value="/usr/share/maven" />
+            <option name="versionString" value="3.6.3" />
+          </config>
+        </ContributedStateBase>
+      </target>
     </targets>
   </component>
 </project>
